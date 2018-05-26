@@ -1,19 +1,10 @@
 var express = require("express");
 var router = express.Router();
+const util = require("../utilities.js");
 
 const User = require("../models/user.model");
 
 const UserViewModel = require("../viewModels/user.viewModel");
-
-const INITAL_COST = 400;
-function upgradeCost(currentLevel) {
-  let res = 1;
-  let exp = currentLevel + 1;
-  while (exp--) {
-    res *= INITAL_COST;
-  }
-  return res;
-}
 
 /**
  * GET resources
@@ -26,7 +17,11 @@ router.get("/resources", async (req, res, next) => {
   });
   if (mongoUser) {
     res.json({
-      resources: mongoUser.resources
+      resources: util.calculateResources(
+        mongoUser.resources,
+        mongoUser.lastChange,
+        mongoUser.level
+      )
     });
   } else {
     res.status(404);
@@ -46,7 +41,8 @@ router.post("/build", async (req, res, next) => {
     res.sendStatus(400);
     return;
   }
-  const cost = upgradeCost(user.level);
+  const cost = util.upgradeCost(user.level);
+  console.log(cost);
 
   if (user.resources < cost) {
     res.status(403).json({
@@ -55,12 +51,23 @@ router.post("/build", async (req, res, next) => {
     return;
   }
 
-  user.resources -= upgradeCost(user.level);
+  if (user.level > 2) {
+    res.status(403).json({
+      message: "You have already reached the maximum level."
+    });
+    return;
+  }
+
+  user.resources -= util.upgradeCost(user.level);
   user.level += 1;
   user.lastChange = new Date();
   await user.save();
   res.json({
-    resources: user.resources,
+    resources: util.calculateResources(
+      user.resources,
+      user.lastChange,
+      user.level
+    ),
     level: user.level
   });
 });
