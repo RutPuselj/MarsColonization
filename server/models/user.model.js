@@ -1,7 +1,10 @@
 const mongoose = require('mongoose');
 
-const bla = new mongoose.Schema({
-	name: mongoose.SchemaTypes.String
+const user = new mongoose.Schema({
+  username: mongoose.SchemaTypes.String,
+  level: mongoose.SchemaTypes.Number,
+  resources: mongoose.SchemaTypes.Number,
+  lastChage: mongoose.SchemaTypes.Date
 });
 
-module.exports = mongoose.model('User', bla);
+module.exports = mongoose.model('User', user);
