@@ -4,15 +4,11 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const mongoose = require('mongoose');
-const Raven = require('raven');
 
 // Must configure Raven before doing anything else with it
-Raven.config(process.env.SENTRY_DSN || '', {
-  captureUnhandledRejections: true
-}).install();
 
 var usersRouter = require('./routes/users');
-var blockRouter = require('./routes/block');
+var gameRouter = require('./routes/game');
 
 var app = express();
 
@@ -28,8 +24,6 @@ const db = mongoose.connect(process.env.MONGO_STRING)
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
-// The request handler must be the first middleware on the app
-app.use(Raven.requestHandler());
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -37,8 +31,8 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/users', usersRouter);
-app.use('/block', blockRouter);
+app.use('/', usersRouter);
+app.use('/', gameRouter);
 
 // Fallback handler that returns react app (if we don't hit any API endpoint)
 app.use('/static', express.static(path.join(__dirname, '..', 'client', 'build', 'static')));
@@ -52,7 +46,6 @@ app.use(function(req, res, next) {
 });
 
 // The error handler must be before any other error middleware
-app.use(Raven.errorHandler());
 
 // error handler
 app.use(function(err, req, res, next) {
