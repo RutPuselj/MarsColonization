@@ -43,11 +43,14 @@ router.post("/build", async (req, res, next) => {
   }
   const cost = util.upgradeCost(user.level);
   console.log(cost);
-
-  if (user.resources < cost) {
-    res.status(403).json({
-      message: "Not enough resources."
-    });
+  const ress = util.calculateResources(
+    user.resources,
+    user.lastChange,
+    user.level
+  );
+  console.log(ress);
+  if (ress < cost) {
+    res.status(403).json({ message: 'Not enough resources.' });
     return;
   }
 

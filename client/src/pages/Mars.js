@@ -9,44 +9,33 @@ import Building03 from '../assets/building03.svg';
 
 
 class Mars extends Component {
-
-    constructor(props) {
-        super(props);
-        this.state = {
-            resources: '',
-            level: ''
-        }
-    }
+    buildings = [ Building00,Building01, Building02, Building03];
 
     logoutUser = () => {
-        localStorage.setItem('username', '');
+        localStorage.setItem('user', null);
         this.props.history.push('/login');
     }
 
-    countResource = () => {
-
-    }
-
-    upgrade = () => {
-
-    }
 
     render() {
-        return (
-            <div className="mars_container">
-                <div className="mars_header">
-                    <button className="mars_logoutButton" type="button" value="Logout" onClick={this.logoutUser}>LOGOUT</button>
-                    <div className="mars_resource">Resources: </div>
-                </div>
-                <div className="mars_building">
-                    <img className="building_img" src={Building00} />
-                </div>
-                <div className="mars_upgrade">
-                    <button className="mars_upgradeButton" type="button" value="Upgrade" onClick={this.upgrade}>UPGRADE</button>
-                </div>
-                
+        return <div className="mars_container">
+            <div className="mars_header">
+              <button className="mars_logoutButton" type="button" value="Logout" onClick={this.logoutUser}>
+                LOGOUT
+              </button>
+              <div className="mars_resource">
+                Resources: {this.props.resources}
+              </div>
             </div>
-        );
+            <div className="mars_building">
+                <img className="building_img" src={this.buildings[this.props.level]} />
+            </div>
+            <div className="mars_upgrade">
+              <button className="mars_upgradeButton" type="button" value="Upgrade" onClick={this.props.handleUpgrade}>
+                UPGRADE {this.props.level}->{this.props.level+1}
+              </button>
+            </div>
+          </div>;
     }
 }
 

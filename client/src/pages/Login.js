@@ -3,7 +3,7 @@ import { BrowserRouter, Route, Switch, withRouter } from 'react-router-dom';
 import axios from 'axios';
 import './Login.css';
 
- class Login extends Component {
+class Login extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -11,21 +11,21 @@ import './Login.css';
     };
   }
 
-  saveUsername = event => {
-    this.setState({
-      username: event.target.value
-    });
-  };
+    saveUsername = event => {
+        this.setState({
+            username: event.target.value
+        });
+    };
 
-  loginUser = () => {
-    axios
-      .post('/login', {
-        username: this.state.username
-      })
-      .then(() => {
-          localStorage.setItem('username', JSON.stringify(this.state.username));
-          this.props.history.push('/mars');
-      });
+
+  loginUser = async () => {
+    let user = await axios.post('/login', {
+      username: this.state.username
+    });
+    localStorage.setItem('user', JSON.stringify(user));
+    console.log(user);
+    this.props.handleLogin(user.data.username, user.data.resources, user.data.level);
+    this.props.history.push('/mars');
   };
 
   render() {
@@ -36,6 +36,7 @@ import './Login.css';
             type="text"
             placeholder="Enter your username"
             onChange={this.saveUsername}
+            value={this.state.username}
           />
           <button type="button" value="Login" onClick={this.loginUser}>
             LOGIN
@@ -46,4 +47,4 @@ import './Login.css';
   }
 }
 
-export default withRouter(Login)
+export default withRouter(Login);
