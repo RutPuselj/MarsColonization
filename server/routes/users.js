@@ -1,5 +1,6 @@
 var express = require("express");
 var router = express.Router();
+const util = require('../utilities.js');
 
 const User = require("../models/user.model");
 
@@ -13,17 +14,19 @@ const UserViewModel = require("../viewModels/user.viewModel");
 router.post("/login", async (req, res, next) => {
   let username = req.body.username;
 
-  let element = await User.findOne({ username: username });
-  if (!element) {
-    element = new User({
+  let user = await User.findOne({ username: username });
+  if (!user) {
+    user = new User({
       username: username,
       level: 0,
       resources: 500,
       lastChange: new Date()
     });
-    await element.save();
+    await user.save();
   }
-  res.json(element);
+  console.log(user)
+  user.resources = util.calculateResources(user.resources, user.lastChange, user.level);
+  res.json(user);
 });
 
 /**

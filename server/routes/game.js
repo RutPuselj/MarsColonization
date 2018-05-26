@@ -1,33 +1,22 @@
-var express = require("express");
+var express = require('express');
 var router = express.Router();
+const util = require("../utilities.js")
 
-const User = require("../models/user.model");
+const User = require('../models/user.model');
 
-const UserViewModel = require("../viewModels/user.viewModel");
-
-const INITAL_COST = 400;
-function upgradeCost(currentLevel) {
-  let res = 1;
-  let exp = currentLevel + 1;
-  while (exp--) {
-    res *= INITAL_COST;
-  }
-  return res;
-}
+const UserViewModel = require('../viewModels/user.viewModel');
 
 /**
  * GET resources
  * route: /resources
  * returns: resources
  */
-router.get("/resources", async (req, res, next) => {
+router.get('/resources', async (req, res, next) => {
   let mongoUser = await User.findOne({
     username: req.query.username
   });
   if (mongoUser) {
-    res.json({
-      resources: mongoUser.resources
-    });
+    res.json({ resources: util.calculateResources(mongoUser.resources, mongoUser.lastChange, mongoUser.level) });
   } else {
     res.status(404);
   }
@@ -38,7 +27,7 @@ router.get("/resources", async (req, res, next) => {
  * route: /logout
  * returns: status
  */
-router.post("/build", async (req, res, next) => {
+router.post('/build', async (req, res, next) => {
   let username = req.body.username;
 
   let user = await User.findOne({ username: username });
@@ -46,21 +35,28 @@ router.post("/build", async (req, res, next) => {
     res.sendStatus(400);
     return;
   }
-  const cost = upgradeCost(user.level);
+  const cost = util.upgradeCost(user.level);
 
   if (user.resources < cost) {
     res.status(403).json({
-      message: "Not enough resources."
+      message: 'Not enough resources.'
     });
     return;
   }
 
-  user.resources -= upgradeCost(user.level);
+  if (user.level > 2){
+    res.status(403).json({
+      message: "You have already reached the maximum level."
+    })
+    return;
+  }
+
+  user.resources -= util.upgradeCost(user.level);
   user.level += 1;
   user.lastChange = new Date();
   await user.save();
   res.json({
-    resources: user.resources,
+    resources: util.calculateResources(user.resources, user.lastChange, user.level),
     level: user.level
   });
 });
