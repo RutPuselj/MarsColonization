@@ -1,22 +1,28 @@
-var express = require('express');
+var express = require("express");
 var router = express.Router();
-const util = require("../utilities.js")
+const util = require("../utilities.js");
 
-const User = require('../models/user.model');
+const User = require("../models/user.model");
 
-const UserViewModel = require('../viewModels/user.viewModel');
+const UserViewModel = require("../viewModels/user.viewModel");
 
 /**
  * GET resources
  * route: /resources
  * returns: resources
  */
-router.get('/resources', async (req, res, next) => {
+router.get("/resources", async (req, res, next) => {
   let mongoUser = await User.findOne({
     username: req.query.username
   });
   if (mongoUser) {
-    res.json({ resources: util.calculateResources(mongoUser.resources, mongoUser.lastChange, mongoUser.level) });
+    res.json({
+      resources: util.calculateResources(
+        mongoUser.resources,
+        mongoUser.lastChange,
+        mongoUser.level
+      )
+    });
   } else {
     res.status(404);
   }
@@ -27,7 +33,7 @@ router.get('/resources', async (req, res, next) => {
  * route: /logout
  * returns: status
  */
-router.post('/build', async (req, res, next) => {
+router.post("/build", async (req, res, next) => {
   let username = req.body.username;
 
   let user = await User.findOne({ username: username });
@@ -36,18 +42,19 @@ router.post('/build', async (req, res, next) => {
     return;
   }
   const cost = util.upgradeCost(user.level);
+  console.log(cost);
 
   if (user.resources < cost) {
     res.status(403).json({
-      message: 'Not enough resources.'
+      message: "Not enough resources."
     });
     return;
   }
 
-  if (user.level > 2){
+  if (user.level > 2) {
     res.status(403).json({
       message: "You have already reached the maximum level."
-    })
+    });
     return;
   }
 
@@ -56,7 +63,11 @@ router.post('/build', async (req, res, next) => {
   user.lastChange = new Date();
   await user.save();
   res.json({
-    resources: util.calculateResources(user.resources, user.lastChange, user.level),
+    resources: util.calculateResources(
+      user.resources,
+      user.lastChange,
+      user.level
+    ),
     level: user.level
   });
 });
