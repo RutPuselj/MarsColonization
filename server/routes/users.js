@@ -14,25 +14,25 @@ router.post("/login", async (req, res, next) => {
   let username = req.body.username;
 
   let element = await User.findOne({ username: username });
-  if (element) {
-    res.sendStatus(200);
-  } else {
+  if (!element) {
     element = new User({
       username: username,
       level: 0,
       resources: 500,
-      last_change: new Date()
+      lastChange: new Date()
     });
     await element.save();
-    res.sendStatus(200);
   }
+  res.json(element);
 });
 
 /**
- * POST login username
+ * POST logout
  * route: /logout
  * returns: status
  */
-router.post("/logout", async (req, res, next) => {});
+router.post("/logout", async (req, res, next) => {
+  res.sendStatus(200);
+});
 
 module.exports = router;

@@ -6,11 +6,22 @@ const User = require("../models/user.model");
 const UserViewModel = require("../viewModels/user.viewModel");
 
 /**
- * POST login username
+ * GET resources
  * route: /resources
- * returns: status
+ * returns: resources
  */
-router.get("/resources", async (req, res, next) => {});
+router.get("/resources", async (req, res, next) => {
+  let mongoUser = await User.findOne({
+    username: req.query.username
+  });
+  if (mongoUser) {
+    res.json({
+      resources: mongoUser.resources
+    });
+  } else {
+    res.status(404);
+  }
+});
 
 /**
  * POST login username
