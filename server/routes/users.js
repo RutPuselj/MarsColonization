@@ -1,39 +1,38 @@
-var express = require('express');
+var express = require("express");
 var router = express.Router();
 
-const User = require('../models/user.model');
+const User = require("../models/user.model");
 
-const UserViewModel = require('../viewModels/user.viewModel');
+const UserViewModel = require("../viewModels/user.viewModel");
 
-/* GET users listing. */
-router.get('/', function(req, res, next) {
-  res.send('respond with a resource');
-});
+/**
+ * POST login username
+ * route: /login
+ * returns: status
+ */
+router.post("/login", async (req, res, next) => {
+  let username = req.params.username;
 
-router.get('/bla', async (req, res, next) => {
-  res.send('ovo je bla ruta');
-});
-
-router.get('/:id', async (req, res, next) => {
-  const id = req.params.id;
-
-  const user = await User.findOne({_id: id});
-
-  if (!user) {
-    return res.sendStatus(404);
+  let element = await User.findOne({ username: username });
+  if (element) {
+    res.sendStatus(200);
+  } else {
+    element = new User({
+      username: username,
+      level: 0,
+      resources: 500,
+      last_change: new Date()
+    });
+    await element.save();
+    res.sendStatus(200);
   }
-
-  res.json(UserViewModel(user));
 });
 
-
-router.put('/', async (req, res, next) => {
-  const newUser = new User();
-  newUser.name = 'moje ime';
-
-  await newUser.save();
-  
-  res.json(newUser);
-});
+/**
+ * POST login username
+ * route: /logout
+ * returns: status
+ */
+router.post("/logout", async (req, res, next) => {});
 
 module.exports = router;
