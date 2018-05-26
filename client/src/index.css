@@ -1,0 +1,53 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+}
+
+.navigation {
+	display: flex;
+	flex-flow: row;
+	align-items: center;
+	justify-content: center;
+	color: white;
+	padding: 24px 64px;
+	background-color: #212121;
+}
+
+.navigation h1 {
+	color: white;
+}
+
+.navigation a {
+	color: white;
+	text-decoration: none;
+}
+
+.navigation a + a {
+	padding-left: 16px;
+}
+
+.navigation a:visited,
+.navigation a:focus {
+	color: white;	
+}
+
+.container {
+	height: 100%;
+	width: 100vw;
+	display: flex;
+	flex-flow: column nowrap;
+	align-items: center;
+	justify-content: center;
+	color: #212121;
+	background-color: white;
+}
+
+table tr td {
+	height: 50px;
+	width: 50px;
+}
+
+table {
+	margin-bottom: 20px;
+}
