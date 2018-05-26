@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { BrowserRouter, Route, Switch,withRouter } from 'react-router-dom';
+import { BrowserRouter, Route, Switch, withRouter } from 'react-router-dom';
 import axios from 'axios';
 import './Login.css';
 
@@ -23,6 +23,7 @@ import './Login.css';
         username: this.state.username
       })
       .then(() => {
+          localStorage.setItem('username', JSON.stringify(this.state.username));
           this.props.history.push('/mars');
       });
   };

@@ -1,0 +1,23 @@
+.mars_container {
+
+}
+
+.mars_header {
+    display: flex;
+    justify-content: center;
+    margin: 50px;
+}
+
+.mars_logoutButton {
+    margin-right: 500px;
+}
+
+.mars_building {
+    display: flex;
+    justify-content: center;
+}
+
+.building_img {
+    height: 50%;
+    width: 50%;
+}
