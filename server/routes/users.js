@@ -11,7 +11,7 @@ const UserViewModel = require("../viewModels/user.viewModel");
  * returns: status
  */
 router.post("/login", async (req, res, next) => {
-  let username = req.params.username;
+  let username = req.body.username;
 
   let element = await User.findOne({ username: username });
   if (element) {
